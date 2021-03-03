@@ -27,7 +27,7 @@ class BattleFormEnum(IntEnum):
 '''
 ~~~~~~~ FORM NOTES ~~~~~~~~~~
 
-- all forms flow into themselves
+- flow only matters when changing forms -- forms essentially flow into themselves (not explicitly)
 - if you don't flow, your priority drops by 1. If your 
 attack move has +1 priority, it's instead zero.
 - pokemon types average 3.5 super effective per type (between 2 and 5), out of ~16
@@ -49,7 +49,6 @@ BATTLEFORM_DICT[BattleFormEnum.oceanking] = BattleFormData(
 	BattleFormEnum.oceanking,
 	'Ocean King',
 	[
-		BattleFormEnum.oceanking,
 		BattleFormEnum.eternalsky,
 		BattleFormEnum.fathomlessabyss,
 		BattleFormEnum.forestguardian
@@ -58,20 +57,17 @@ BATTLEFORM_DICT[BattleFormEnum.mountainman] = BattleFormData(
 	BattleFormEnum.mountainman,
 	'Mountain Man',
 	[
-		BattleFormEnum.mountainman,
 		BattleFormEnum.oceanking
 	])
 BATTLEFORM_DICT[BattleFormEnum.forestguardian] = BattleFormData(
 	BattleFormEnum.forestguardian,
 	'Forest Guardian',
 	[
-		BattleFormEnum.forestguardian
 	])
 BATTLEFORM_DICT[BattleFormEnum.thundergod] = BattleFormData(
 	BattleFormEnum.thundergod,
 	'Thunder God',
 	[
-		BattleFormEnum.thundergod,
 		BattleFormEnum.oceanking,
 		BattleFormEnum.mountainman,
 		BattleFormEnum.forestguardian
@@ -80,14 +76,12 @@ BATTLEFORM_DICT[BattleFormEnum.sunemporer] = BattleFormData(
 	BattleFormEnum.sunemporer,
 	'Sun Emporer',
 	[
-		BattleFormEnum.sunemporer,
 		BattleFormEnum.forestguardian
 	])
 BATTLEFORM_DICT[BattleFormEnum.moonempress] = BattleFormData(
 	BattleFormEnum.moonempress,
 	'Moon Empress',
 	[
-		BattleFormEnum.moonempress,
 		BattleFormEnum.oceanking,
 		BattleFormEnum.motherslove
 	])
@@ -95,7 +89,6 @@ BATTLEFORM_DICT[BattleFormEnum.freespirit] = BattleFormData(
 	BattleFormEnum.freespirit,
 	'Free Spirit',
 	[
-		BattleFormEnum.freespirit,
 		BattleFormEnum.stillmind,
 		BattleFormEnum.motherslove
 	])
@@ -103,43 +96,40 @@ BATTLEFORM_DICT[BattleFormEnum.justlaw] = BattleFormData(
 	BattleFormEnum.justlaw,
 	'Just Law',
 	[
-		BattleFormEnum.justlaw,
 		BattleFormEnum.freespirit
 	])
 BATTLEFORM_DICT[BattleFormEnum.eternalsky] = BattleFormData(
 	BattleFormEnum.eternalsky,
 	'Eternal Sky',
 	[
-		BattleFormEnum.eternalsky,
 		BattleFormEnum.thundergod
 	])
 BATTLEFORM_DICT[BattleFormEnum.motherslove] = BattleFormData(
 	BattleFormEnum.motherslove,
 	'Mother\'s Love',
 	[
-		BattleFormEnum.motherslove
 	])
 BATTLEFORM_DICT[BattleFormEnum.fathomlessabyss] = BattleFormData(
 	BattleFormEnum.fathomlessabyss,
 	'Fathomless Abyss',
 	[
-		BattleFormEnum.fathomlessabyss
 	])
 BATTLEFORM_DICT[BattleFormEnum.stillmind] = BattleFormData(
 	BattleFormEnum.stillmind,
 	'Still Mind',
 	[
-		BattleFormEnum.stillmind
 	])
 
 
 def analyze():
+	textlength = 16
 	print()
 	print('FLOWSTO\t\tFLOWSFROM\tLOOPS\t\tNAME')
 	row = 0
+	allLoops = detectloops()
 	for key in BATTLEFORM_DICT:
 		if row%3==0:
-			print('.   '*15)
+			print('.   '*textlength)
 		row += 1
 
 		form = BATTLEFORM_DICT[key]
@@ -149,19 +139,43 @@ def analyze():
 			fromform = BATTLEFORM_DICT[key2]
 			if (form.enumid in fromform.flows):
 				flowsfrom += 1
+
 		loops = 0
-		# build tree, keep track of flows, parents, and form. 
-		# If flow is in parents, remove. If flow is form, add to loop.
+		for loop in allLoops:
+			if key in loop:
+				loops += 1
 
 		print('%d\t\t%d\t\t%d\t\t%s' % (flowsto, flowsfrom, loops, form.name))
-	print('.   '*15)
+	print('.   '*textlength)
+	print()
+	print('LOOPS')
+	print()
+	for i in range(len(allLoops)):
+		print('~~~ #%d ~~~' % i)
+		printloop(allLoops[i])
+		print()
+
+	print('.   '*textlength)
+
+def printloop(loop):
+	result = ''
+	for i in range(len(loop)):
+		node = loop[i]
+		result += '%s ->' % BATTLEFORM_DICT[node].name
+		result += '\n' + '  '*(i+1)
+	result += '...'
+	print(result)
 
 def cycleequal(cyc1, cyc2):
 	length = len(cyc1)
 	len2 = len(cyc2)
 	if (length == 0 or len2 == 0 or length != len2):
 		return False
-	shift = cyc2.index(cyc1[0])
+	shift = -1
+	try:
+		shift = cyc2.index(cyc1[0])
+	except:
+		pass
 	if (shift < 0):
 		return False
 	for i in range(len(cyc1)):
@@ -170,9 +184,47 @@ def cycleequal(cyc1, cyc2):
 			return False
 	return True
 
+# build tree, keep track of flows, parents, and form. 
+# If flow is in parents, remove. If flow is form, add to loop.
 def detectloops():
 	loops = []
-	tree = {}
+	for head in BATTLEFORM_DICT.values():
+		tree = buildtree([head.enumid])
+		loops.extend(tree)
+
+	repeatloops = {}
+	for i in range(len(loops)):
+		repeatloops[i] = []
+		for j in range(len(loops)):
+			if i != j:
+				if (cycleequal(loops[i], loops[j])):
+					repeatloops[i].append(j)
+
+	result = []
+	repeat = []
+	for key in repeatloops:
+		if (key not in repeat):
+			result.append(loops[key])
+			repeat.extend(repeatloops[key])
+
+	return result
+
+def buildtree(path):
+	result = []
+	parent = path[-1]
+	children = BATTLEFORM_DICT[parent].flows
+	for child in children:
+		childindex = -1
+		try:
+			childindex = path.index(child)
+		except:
+			pass
+		if childindex >= 0:
+			result.append(path[childindex:])
+		else:
+			result.extend(buildtree(path+[child]))
+	return result
+
 
 if __name__=='__main__':
 	analyze()
