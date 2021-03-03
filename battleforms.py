@@ -35,15 +35,17 @@ attack move has +1 priority, it's instead zero.
 - pokemon types range from 1 to 7 weaknesses
 	-> FLOWSFROM range from 1 to 7
 
-
-
-~~~~~~ LOOPS ? ~~~~~~~~~~~~~~~~~
-
-0) all forms into themselves
+- do you flow from your previous attack, or your opponent's??
+	* kinda lame if it's opponent's, since it's reactive and harder to plan?
+	* harder to devise a fool-proof strategy ahead of time, for same reason, which is cool
 
 '''
 
 BATTLEFORM_DICT = {}
+
+'''
+# FLOWSTO         MIN: 1  MAX: 4
+# FLOWSFROM       MIN: 2  MAX: 6
 
 BATTLEFORM_DICT[BattleFormEnum.oceanking] = BattleFormData(
 	BattleFormEnum.oceanking,
@@ -57,12 +59,17 @@ BATTLEFORM_DICT[BattleFormEnum.mountainman] = BattleFormData(
 	BattleFormEnum.mountainman,
 	'Mountain Man',
 	[
-		BattleFormEnum.oceanking
+		BattleFormEnum.oceanking,
+		BattleFormEnum.justlaw,
+		BattleFormEnum.fathomlessabyss
 	])
 BATTLEFORM_DICT[BattleFormEnum.forestguardian] = BattleFormData(
 	BattleFormEnum.forestguardian,
 	'Forest Guardian',
 	[
+		BattleFormEnum.mountainman,
+		BattleFormEnum.freespirit,
+		BattleFormEnum.stillmind
 	])
 BATTLEFORM_DICT[BattleFormEnum.thundergod] = BattleFormData(
 	BattleFormEnum.thundergod,
@@ -76,7 +83,105 @@ BATTLEFORM_DICT[BattleFormEnum.sunemporer] = BattleFormData(
 	BattleFormEnum.sunemporer,
 	'Sun Emporer',
 	[
-		BattleFormEnum.forestguardian
+		BattleFormEnum.forestguardian,
+		BattleFormEnum.fathomlessabyss,
+		BattleFormEnum.moonempress
+	])
+BATTLEFORM_DICT[BattleFormEnum.moonempress] = BattleFormData(
+	BattleFormEnum.moonempress,
+	'Moon Empress',
+	[
+		BattleFormEnum.oceanking,
+		BattleFormEnum.motherslove,
+		BattleFormEnum.fathomlessabyss
+	])
+BATTLEFORM_DICT[BattleFormEnum.freespirit] = BattleFormData(
+	BattleFormEnum.freespirit,
+	'Free Spirit',
+	[
+		BattleFormEnum.stillmind,
+		BattleFormEnum.motherslove,
+		BattleFormEnum.mountainman,
+		BattleFormEnum.eternalsky
+	])
+BATTLEFORM_DICT[BattleFormEnum.justlaw] = BattleFormData(
+	BattleFormEnum.justlaw,
+	'Just Law',
+	[
+		BattleFormEnum.freespirit,
+		BattleFormEnum.forestguardian,
+		BattleFormEnum.moonempress,
+		BattleFormEnum.motherslove
+	])
+BATTLEFORM_DICT[BattleFormEnum.eternalsky] = BattleFormData(
+	BattleFormEnum.eternalsky,
+	'Eternal Sky',
+	[
+		BattleFormEnum.fathomlessabyss,	
+		BattleFormEnum.thundergod,
+		BattleFormEnum.sunemporer,
+		BattleFormEnum.moonempress
+	])
+BATTLEFORM_DICT[BattleFormEnum.motherslove] = BattleFormData(
+	BattleFormEnum.motherslove,
+	'Mother\'s Love',
+	[
+		BattleFormEnum.thundergod,
+		BattleFormEnum.moonempress,
+		BattleFormEnum.justlaw
+	])
+BATTLEFORM_DICT[BattleFormEnum.fathomlessabyss] = BattleFormData(
+	BattleFormEnum.fathomlessabyss,
+	'Fathomless Abyss',
+	[
+		BattleFormEnum.sunemporer
+	])
+BATTLEFORM_DICT[BattleFormEnum.stillmind] = BattleFormData(
+	BattleFormEnum.stillmind,
+	'Still Mind',
+	[
+		BattleFormEnum.justlaw,
+		BattleFormEnum.forestguardian,
+		BattleFormEnum.fathomlessabyss,
+		BattleFormEnum.eternalsky
+	])
+
+'''
+
+BATTLEFORM_DICT[BattleFormEnum.oceanking] = BattleFormData(
+	BattleFormEnum.oceanking,
+	'Ocean King',
+	[
+		BattleFormEnum.eternalsky,
+		BattleFormEnum.forestguardian,
+		BattleFormEnum.stillmind
+	])
+BATTLEFORM_DICT[BattleFormEnum.mountainman] = BattleFormData(
+	BattleFormEnum.mountainman,
+	'Mountain Man',
+	[
+		BattleFormEnum.oceanking
+	])
+BATTLEFORM_DICT[BattleFormEnum.forestguardian] = BattleFormData(
+	BattleFormEnum.forestguardian,
+	'Forest Guardian',
+	[
+		BattleFormEnum.mountainman,
+		BattleFormEnum.freespirit
+	])
+BATTLEFORM_DICT[BattleFormEnum.thundergod] = BattleFormData(
+	BattleFormEnum.thundergod,
+	'Thunder God',
+	[
+		BattleFormEnum.oceanking,
+		BattleFormEnum.mountainman
+	])
+BATTLEFORM_DICT[BattleFormEnum.sunemporer] = BattleFormData(
+	BattleFormEnum.sunemporer,
+	'Sun Emporer',
+	[
+		BattleFormEnum.forestguardian,
+		BattleFormEnum.moonempress
 	])
 BATTLEFORM_DICT[BattleFormEnum.moonempress] = BattleFormData(
 	BattleFormEnum.moonempress,
@@ -96,18 +201,23 @@ BATTLEFORM_DICT[BattleFormEnum.justlaw] = BattleFormData(
 	BattleFormEnum.justlaw,
 	'Just Law',
 	[
-		BattleFormEnum.freespirit
+		BattleFormEnum.freespirit,
+		BattleFormEnum.moonempress
 	])
 BATTLEFORM_DICT[BattleFormEnum.eternalsky] = BattleFormData(
 	BattleFormEnum.eternalsky,
 	'Eternal Sky',
 	[
-		BattleFormEnum.thundergod
+		BattleFormEnum.thundergod,
+		BattleFormEnum.sunemporer,
+		BattleFormEnum.moonempress
 	])
 BATTLEFORM_DICT[BattleFormEnum.motherslove] = BattleFormData(
 	BattleFormEnum.motherslove,
 	'Mother\'s Love',
 	[
+		BattleFormEnum.moonempress,
+		BattleFormEnum.justlaw
 	])
 BATTLEFORM_DICT[BattleFormEnum.fathomlessabyss] = BattleFormData(
 	BattleFormEnum.fathomlessabyss,
@@ -118,44 +228,80 @@ BATTLEFORM_DICT[BattleFormEnum.stillmind] = BattleFormData(
 	BattleFormEnum.stillmind,
 	'Still Mind',
 	[
+		BattleFormEnum.justlaw,
+		BattleFormEnum.fathomlessabyss
 	])
 
-
-def analyze():
-	textlength = 16
+def analyze(printloops):
+	textlength = 0
 	print()
-	print('FLOWSTO\t\tFLOWSFROM\tLOOPS\t\tNAME')
+	allLoops = 0
+	if (printloops):
+		print('\tFLOWSTO\t\tFLOWSFROM\tLOOPS\t\tNAME')
+		allLoops = detectloops()
+		textlength = 18
+	else:
+		print('\tFLOWSTO\t\tFLOWSFROM\tNAME')
+		textlength = 16
 	row = 0
-	allLoops = detectloops()
+	flowtorange = [len(BATTLEFORM_DICT), 0]
+	flowfromrange = [len(BATTLEFORM_DICT), 0]
+	flowstosum = 0
+	flowsfromsum = 0
 	for key in BATTLEFORM_DICT:
 		if row%3==0:
-			print('.   '*textlength)
+			print()
 		row += 1
 
 		form = BATTLEFORM_DICT[key]
+
 		flowsto = len(form.flows)
+		# set range of flowsto
+		if (flowsto < flowtorange[0]):
+			flowtorange[0] = flowsto
+		if (flowsto > flowtorange[1]):
+			flowtorange[1] = flowsto
+		flowstosum += flowsto
+
 		flowsfrom = 0
 		for key2 in BATTLEFORM_DICT:
 			fromform = BATTLEFORM_DICT[key2]
 			if (form.enumid in fromform.flows):
 				flowsfrom += 1
+		# set range of flowsfrom
+		if (flowsfrom < flowfromrange[0]):
+			flowfromrange[0] = flowsfrom
+		if (flowsfrom > flowfromrange[1]):
+			flowfromrange[1] = flowsfrom
+		flowsfromsum += flowsfrom
 
-		loops = 0
-		for loop in allLoops:
-			if key in loop:
-				loops += 1
+		if (printloops):
+			loops = 0
+			for loop in allLoops:
+				if key in loop:
+					loops += 1
+			print('\t%d\t\t%d\t\t%d\t\t%s' % (flowsto, flowsfrom, loops, form.name))
+		else:
+			print('\t%d\t\t%d\t\t%s' % (flowsto, flowsfrom, form.name))
+	print()
+	avgflowto = flowstosum/float(len(BATTLEFORM_DICT))
+	print('FLOWSTO(+self)\t\tMIN: %d(%d)\tMAX: %d(%d)\tAVG: %.2f(~%d)' % (
+		flowtorange[0], flowtorange[0]+1, flowtorange[1], flowtorange[1]+1, 
+		avgflowto, int(avgflowto+1.5)))
+	print('FLOWSFROM(+self)\tMIN: %d(%d)\tMAX: %d(%d)' % (
+		flowfromrange[0], flowfromrange[0]+1, flowfromrange[1], flowfromrange[1]+1))
+	print()
 
-		print('%d\t\t%d\t\t%d\t\t%s' % (flowsto, flowsfrom, loops, form.name))
-	print('.   '*textlength)
-	print()
-	print('LOOPS')
-	print()
-	for i in range(len(allLoops)):
-		print('~~~ #%d ~~~' % i)
-		printloop(allLoops[i])
+	if (printloops):
 		print()
+		print('LOOPS')
+		print()
+		for i in range(len(allLoops)):
+			print('~~~ #%d ~~~' % i)
+			printloop(allLoops[i])
+			print()
 
-	print('.   '*textlength)
+		print()
 
 def printloop(loop):
 	result = ''
@@ -227,4 +373,8 @@ def buildtree(path):
 
 
 if __name__=='__main__':
-	analyze()
+	loops = input('loops? (y/n): ')
+	if (loops == 'y'):
+		analyze(True)
+	else:
+		analyze(False)
